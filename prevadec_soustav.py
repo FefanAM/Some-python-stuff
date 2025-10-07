@@ -66,7 +66,7 @@ def move_app(e):
 root = Tk()
 root.configure(background="black", bd=0)
 root.geometry('260x170')
-# Create custom titlebar
+# Create custom titlebar and close button + window moving
 root.overrideredirect(True)
 title_bar = Frame(root, background="black", bd=0)
 title_bar.pack(expand=True, fill=X)
