@@ -1,5 +1,4 @@
 from tkinter import *
-root = Tk()
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 
@@ -12,6 +11,7 @@ def convertToLetter(num):
 
 
 def convertToNumber(let):
+    let = let.upper()
     if let in numbers:
         return let
     else:
@@ -38,12 +38,18 @@ def tens(z, r):
 
 
 def convert(num, radix, resultRadix):
+    for i in num:
+        if int(convertToNumber(i)) >= radix or resultRadix == 1:
+            return "syntax error"
     return binarize(tens(num, radix), resultRadix)
 
 
 def clicked():
-    result = convert(numberInput.get(), int(enteredRdInput.get()), int(wantedRdInput.get()))
-    answer.configure(text="Your number is: " + result)
+    if numberInput.get() == "" or enteredRdInput.get() == "" or wantedRdInput.get() == "":
+        return
+    else:
+        result = convert(numberInput.get(), int(enteredRdInput.get()), int(wantedRdInput.get()))
+        answer.configure(text="Your answer is: " + result)
 
 
 def clearall():
@@ -53,25 +59,52 @@ def clearall():
     answer.configure(text="")
 
 
-root.title("Převaděč soustav")
+def move_app(e):
+    root.geometry(f'+{e.x_root}+{e.y_root}')
+
+
+root = Tk()
+root.configure(background="black", bd=0)
 root.geometry('260x170')
-enteredNumber = Label(root, text="Number:")
-numberInput = Entry(root, width=20)
-enteredRadix = Label(root, text="Radix of number:")
-enteredRdInput = Entry(root, width=20)
-wantedRadix = Label(root, text="Designated radix:")
-wantedRdInput = Entry(root, width=20)
-calculate = Button(root, text="Calculate", command=clicked)
-clear = Button(root, text="Clear all", command=clearall)
-answer = Label(root, text="")
-enteredNumber.grid(column=0, row=0, padx=4)
-numberInput.grid(column=1, row=0, pady=10)
-enteredRadix.grid(column=0, row=2, padx=4)
-enteredRdInput.grid(column=1, row=2)
-wantedRadix.grid(column=0, row=3, padx=4)
-wantedRdInput.grid(column=1, row=3, pady=10)
-calculate.grid(row=4, column=0, padx=4)
-clear.grid(row=4, column=1)
-answer.grid(row=6, columnspan=2, pady=10, padx=4)
+# Create custom titlebar
+root.overrideredirect(True)
+title_bar = Frame(root, background="black", bd=0)
+title_bar.pack(expand=True, fill=X)
+title_bar.bind("<B1-Motion>", move_app)
+title_label = Label(title_bar, text="  Převaděč", background="black", fg="white", font="arial, 10")
+title_label.pack(side=LEFT)
+close_btn = Button(title_bar, text="x ", command=root.quit, background="black", fg="white", bd=0, font="arial, 15")
+close_btn.pack(side=RIGHT)
+# Entered number label + entry
+numberFrame = Frame(root, background="#313336")
+enteredNumber = Label(numberFrame, text="Number:", background="#313336", fg="white")
+numberInput = Entry(numberFrame, width=20, background="#608279", fg="white")
+numberFrame.pack(side=TOP, expand=True, fill=BOTH)
+enteredNumber.pack(side=LEFT, expand=True, fill=X)
+numberInput.pack(side=LEFT, expand=True, fill=X)
+# Radix of number label + entry
+r1frame = Frame(root, background="#313336")
+enteredRadix = Label(r1frame, text="Radix of number:", background="#313336", fg="white")
+enteredRdInput = Entry(r1frame, width=20, background="#608279", fg="white")
+r1frame.pack(side=TOP, expand=True, fill=BOTH)
+enteredRadix.pack(side=LEFT, expand=True, fill=X)
+enteredRdInput.pack(side=LEFT, expand=True, fill=X)
+# Second radix label + entry
+r2frame = Frame(root, background="#313336")
+wantedRadix = Label(r2frame, text="Designated radix:", background="#313336", fg="white")
+wantedRdInput = Entry(r2frame, width=20, background="#608279", fg="white")
+r2frame.pack(side=TOP, expand=True, fill=BOTH)
+wantedRadix.pack(side=LEFT, expand=True, fill=X)
+wantedRdInput.pack(side=LEFT, expand=True, fill=X)
+# Buttons
+buttonsFrame = Frame(root, background="#313336")
+calculate = Button(buttonsFrame, text="Calculate", command=clicked, background="#608279", fg="white")
+clear = Button(buttonsFrame, text="Clear all", command=clearall, background="#608279", fg="white")
+buttonsFrame.pack(side=TOP, expand=True, fill=BOTH)
+calculate.pack(side=LEFT, expand=True, fill=X)
+clear.pack(side=LEFT, expand=True, fill=X)
+# Part where answer is displayed
+answer = Label(root, text="", fg="white", background="#313336")
+answer.pack(side=TOP, expand=True, fill=BOTH)
 
 root.mainloop()
