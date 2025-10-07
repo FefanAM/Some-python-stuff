@@ -1,1 +1,1 @@
-Stránka programování školy: www.xeon.spskladno.cz/~holecek/Predmet_Programovani/
+Stránka programování školy: https://xeon.spskladno.cz/~holecek/Predmet_Programovani/
