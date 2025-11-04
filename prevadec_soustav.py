@@ -2,7 +2,7 @@ from tkinter import *
 numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
 
-def convertToLetter(num):
+def convert_to_letter(num):
     if num > 9:
         dif = num - 10
         return chr(65 + dif)
@@ -10,7 +10,7 @@ def convertToLetter(num):
         return num
 
 
-def convertToNumber(let):
+def convert_to_number(let):
     let = let.upper()
     if let in numbers:
         return let
@@ -21,7 +21,7 @@ def convertToNumber(let):
 def binarize(z, r):
     m = []
     while z != 0:
-        m.insert(0, convertToLetter(z % r))
+        m.insert(0, convert_to_letter(z % r))
         z = z // r
     return "".join(map(str, m))
 
@@ -32,16 +32,16 @@ def tens(z, r):
     z = ''.join(reversed(z))
     i = 0
     for x in z:
-        res += int(convertToNumber(x)) * r ** i
+        res += int(convert_to_number(x)) * r ** i
         i += 1
     return res
 
 
-def convert(num, radix, resultRadix):
+def convert(num, radix, result_radix):
     for i in num:
-        if int(convertToNumber(i)) >= radix or resultRadix == 1:
-            return "syntax error"
-    return binarize(tens(num, radix), resultRadix)
+        if int(convert_to_number(i)) >= radix or result_radix == 1:
+            return "input error"
+    return binarize(tens(num, radix), result_radix)
 
 
 def clicked():
@@ -52,7 +52,7 @@ def clicked():
         answer.configure(text="Your answer is: " + result)
 
 
-def clearall():
+def clear_all():
     numberInput.delete(0, END)
     enteredRdInput.delete(0, END)
     wantedRdInput.delete(0, END)
@@ -99,7 +99,7 @@ wantedRdInput.pack(side=LEFT, expand=True, fill=X)
 # Buttons
 buttonsFrame = Frame(root, background="#313336")
 calculate = Button(buttonsFrame, text="Calculate", command=clicked, background="#608279", fg="white")
-clear = Button(buttonsFrame, text="Clear all", command=clearall, background="#608279", fg="white")
+clear = Button(buttonsFrame, text="Clear all", command=clear_all, background="#608279", fg="white")
 buttonsFrame.pack(side=TOP, expand=True, fill=BOTH)
 calculate.pack(side=LEFT, expand=True, fill=X)
 clear.pack(side=LEFT, expand=True, fill=X)
