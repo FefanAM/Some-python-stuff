@@ -1,9 +1,13 @@
 import time
+import keyboard
+import random
 
 running = True
 width = 120
 height = 29
-game_contents = []
+fruit_count = 10
+facing = 'east'
+game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
 current_row = []
 
 
@@ -27,10 +31,11 @@ def print_row(current_y):
     current_row.clear()
     for x in range(width - 2):
         current_row.append(" ")
-    for item in game_contents:
-        if item.pos_y == current_y:
-            current_row.pop(item.pos_x)
-            current_row.insert(item.pos_x, item.char)
+    for group in game_contents:
+        for item in group:
+            if item.pos_y // 1 == current_y:
+                current_row.pop(int(item.pos_x // 1))
+                current_row.insert(int(item.pos_x // 1), item.char)
 
 
 def new_frame():
@@ -45,14 +50,48 @@ def new_frame():
             print("|" + "".join(map(str, current_row)) + "|")
 
 
-game_contents.append(GameObject('block', 58, 10, '0'))
+def move_player():
+    # set the facing direction via key input
+    global facing
+    if keyboard.is_pressed('w') and facing != 'south':
+        facing = 'north'
+    elif keyboard.is_pressed('s') and facing != 'north':
+        facing = 'south'
+    elif keyboard.is_pressed('a') and facing != 'east':
+        facing = 'west'
+    elif keyboard.is_pressed('d') and facing != 'west':
+        facing = 'east'
+    # move the player in right direction
+    if facing == 'north':
+        game_contents[0][0].pos_y -= 0.25
+    if facing == 'south':
+        game_contents[0][0].pos_y += 0.25
+    if facing == 'west':
+        game_contents[0][0].pos_x -= 0.5
+    if facing == 'east':
+        game_contents[0][0].pos_x += 0.5
+    # make sure player cannot get out of bounds
+    if game_contents[0][0].pos_x >= width - 3:
+        game_contents[0][0].pos_x = width - 3
+    if game_contents[0][0].pos_x <= 0:
+        game_contents[0][0].pos_x = 0
+    if game_contents[0][0].pos_y >= height - 2:
+        game_contents[0][0].pos_y = height - 2
+    if game_contents[0][0].pos_y <= 1:
+        game_contents[0][0].pos_y = 1
+
+
+def place_fruits():
+    # if number of fruits is less than is set, add a new fruit
+    while len(game_contents[1]) < fruit_count:
+        game_contents[1].append(GameObject('fruit', random.randrange(0, width - 3), random.randrange(1, height - 2), '∘'))
+
+
+game_contents[0].append(GameObject('player', width // 2, height // 2, '■'))
 
 while running:
+    place_fruits()
     new_frame()
-    time.sleep(0.0183)
+    time.sleep(0.018)
     clear_all()
-    if game_contents[0].pos_x == 117:
-        game_contents[0].pos_x = 0
-        game_contents[0].pos_y += 1
-    else:
-        game_contents[0].pos_x += 1
+    move_player()
