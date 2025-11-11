@@ -1,10 +1,12 @@
 import time
 import keyboard
 import random
+import os
 
 running = True
 width = 120
 height = 29
+speed = 0.25
 fruit_count = 10
 facing = 'east'
 game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
@@ -63,13 +65,13 @@ def move_player():
         facing = 'east'
     # move the player in right direction
     if facing == 'north':
-        game_contents[0][0].pos_y -= 0.25
+        game_contents[0][0].pos_y -= speed / 2
     if facing == 'south':
-        game_contents[0][0].pos_y += 0.25
+        game_contents[0][0].pos_y += speed / 2
     if facing == 'west':
-        game_contents[0][0].pos_x -= 0.5
+        game_contents[0][0].pos_x -= speed
     if facing == 'east':
-        game_contents[0][0].pos_x += 0.5
+        game_contents[0][0].pos_x += speed
     # make sure player cannot get out of bounds
     if game_contents[0][0].pos_x >= width - 3:
         game_contents[0][0].pos_x = width - 3
@@ -87,11 +89,19 @@ def place_fruits():
         game_contents[1].append(GameObject('fruit', random.randrange(0, width - 3), random.randrange(1, height - 2), '∘'))
 
 
+def eat_fruit():
+    for fruit in game_contents[1]:
+        if fruit.pos_y == game_contents[0][0].pos_y // 1 and fruit.pos_x == game_contents[0][0].pos_x // 1:
+            del game_contents[1][game_contents[1].index(fruit)]
+
+
 game_contents[0].append(GameObject('player', width // 2, height // 2, '■'))
 
 while running:
     place_fruits()
     new_frame()
-    time.sleep(0.018)
-    clear_all()
+    time.sleep(0.01)
+    os.system('cls')
+    # clear_all()
     move_player()
+    eat_fruit()
