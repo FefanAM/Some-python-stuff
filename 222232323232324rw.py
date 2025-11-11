@@ -7,7 +7,7 @@ running = True
 width = 120
 height = 29
 speed = 0.25
-fruit_count = 10
+fruit_count = 9
 facing = 'east'
 game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
 current_row = []
@@ -55,6 +55,7 @@ def new_frame():
 def move_player():
     # set the facing direction via key input
     global facing
+    global running
     if keyboard.is_pressed('w') and facing != 'south':
         facing = 'north'
     elif keyboard.is_pressed('s') and facing != 'north':
@@ -74,13 +75,13 @@ def move_player():
         game_contents[0][0].pos_x += speed
     # make sure player cannot get out of bounds
     if game_contents[0][0].pos_x >= width - 3:
-        game_contents[0][0].pos_x = width - 3
+        running = False
     if game_contents[0][0].pos_x <= 0:
-        game_contents[0][0].pos_x = 0
+        running = False
     if game_contents[0][0].pos_y >= height - 2:
-        game_contents[0][0].pos_y = height - 2
+        running = False
     if game_contents[0][0].pos_y <= 1:
-        game_contents[0][0].pos_y = 1
+        running = False
 
 
 def place_fruits():
@@ -96,6 +97,16 @@ def eat_fruit():
 
 
 game_contents[0].append(GameObject('player', width // 2, height // 2, '■'))
+
+game_contents[1].append(GameObject('fruit', 90, 13, '∘'))
+game_contents[1].append(GameObject('fruit', 90, 14, '∘'))
+game_contents[1].append(GameObject('fruit', 90, 15, '∘'))
+game_contents[1].append(GameObject('fruit', 91, 13, '∘'))
+game_contents[1].append(GameObject('fruit', 91, 14, '∘'))
+game_contents[1].append(GameObject('fruit', 91, 15, '∘'))
+game_contents[1].append(GameObject('fruit', 92, 13, '∘'))
+game_contents[1].append(GameObject('fruit', 92, 14, '∘'))
+game_contents[1].append(GameObject('fruit', 92, 15, '∘'))
 
 while running:
     place_fruits()
