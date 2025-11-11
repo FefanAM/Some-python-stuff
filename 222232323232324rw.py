@@ -6,9 +6,13 @@ import os
 running = True
 width = 120
 height = 29
-speed = 0.25
+speed = 1
 fruit_count = 9
 facing = 'east'
+new_tile_x = 0
+new_tile_y = 0
+y_count = 0
+previous_time = time.time()
 game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
 current_row = []
 
@@ -56,6 +60,9 @@ def move_player():
     # set the facing direction via key input
     global facing
     global running
+    global new_tile_x
+    global new_tile_y
+    global previous_time
     if keyboard.is_pressed('w') and facing != 'south':
         facing = 'north'
     elif keyboard.is_pressed('s') and facing != 'north':
@@ -64,24 +71,36 @@ def move_player():
         facing = 'west'
     elif keyboard.is_pressed('d') and facing != 'west':
         facing = 'east'
-    # move the player in right direction
-    if facing == 'north':
-        game_contents[0][0].pos_y -= speed / 2
-    if facing == 'south':
-        game_contents[0][0].pos_y += speed / 2
-    if facing == 'west':
-        game_contents[0][0].pos_x -= speed
-    if facing == 'east':
-        game_contents[0][0].pos_x += speed
-    # make sure player cannot get out of bounds
-    if game_contents[0][0].pos_x >= width - 3:
-        running = False
-    if game_contents[0][0].pos_x <= 0:
-        running = False
-    if game_contents[0][0].pos_y >= height - 2:
-        running = False
-    if game_contents[0][0].pos_y <= 1:
-        running = False
+    # move all other snake parts
+    new_tile_x = game_contents[0][len(game_contents[0]) - 1].pos_x
+    new_tile_y = game_contents[0][len(game_contents[0]) - 1].pos_y
+    if time.time() - previous_time >= 0.08:
+        for tile in range(len(game_contents[0]) - 1):
+            tile = len(game_contents[0]) - 1 - tile
+            if tile == 0:
+                continue
+            else:
+                game_contents[0][tile].pos_x = game_contents[0][tile - 1].pos_x
+                game_contents[0][tile].pos_y = game_contents[0][tile - 1].pos_y
+        # move the player in right direction
+        if facing == 'north':
+            game_contents[0][0].pos_y -= speed
+        if facing == 'south':
+            game_contents[0][0].pos_y += speed
+        if facing == 'west':
+            game_contents[0][0].pos_x -= speed
+        if facing == 'east':
+            game_contents[0][0].pos_x += speed
+        # make sure player cannot get out of bounds
+        if game_contents[0][0].pos_x > width - 3:
+            running = False
+        if game_contents[0][0].pos_x < 0:
+            running = False
+        if game_contents[0][0].pos_y > height - 2:
+            running = False
+        if game_contents[0][0].pos_y < 1:
+            running = False
+        previous_time = time.time()
 
 
 def place_fruits():
@@ -94,6 +113,7 @@ def eat_fruit():
     for fruit in game_contents[1]:
         if fruit.pos_y == game_contents[0][0].pos_y // 1 and fruit.pos_x == game_contents[0][0].pos_x // 1:
             del game_contents[1][game_contents[1].index(fruit)]
+            game_contents[0].append(GameObject('player', new_tile_x, new_tile_y, '■'))
 
 
 game_contents[0].append(GameObject('player', width // 2, height // 2, '■'))
@@ -111,8 +131,8 @@ game_contents[1].append(GameObject('fruit', 92, 15, '∘'))
 while running:
     place_fruits()
     new_frame()
-    time.sleep(0.01)
-    os.system('cls')
-    # clear_all()
+    time.sleep(0.01767)
+    # os.system('cls')
+    clear_all()
     move_player()
     eat_fruit()
