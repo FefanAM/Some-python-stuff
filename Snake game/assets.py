@@ -13,8 +13,3 @@ menu_screen = """
                                                                  
                                                                  
 """
-
-print(menu_screen)
-
-while True:
-    pass
