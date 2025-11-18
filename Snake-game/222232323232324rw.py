@@ -1,14 +1,16 @@
 import time
 import keyboard
 import random
+from math import sqrt
+from rich.console import Console
 import os
-from assets import menu_screen
+from assets import menu_screen, blank_screen
 
 running = True
-width = 120
-height = 29
+width = 60
+height = 60
 speed = 1
-fruit_count = 9
+fruit_count = 25
 facing = 'east'
 new_tile_x = 0
 new_tile_y = 0
@@ -16,7 +18,8 @@ y_count = 0
 previous_time = time.time()
 game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
 current_row = []
-in_menu = False
+in_menu = True
+console = Console()
 
 
 class GameObject:
@@ -25,12 +28,6 @@ class GameObject:
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.char = char
-
-
-def clear_all():
-    # clear the terminal screen
-    for a in range(height + 1):
-        print(" ")
 
 
 def print_row(current_y):
@@ -46,30 +43,32 @@ def print_row(current_y):
                 current_row.insert(int(item.pos_x // 1), item.char)
 
 
-def new_frame():
+def new_frame() -> str:
     # print a new frame in terminal
+    this_frame = ""
     for x in range(height):
         if x == 0:
-            print("▨" + "≡" * (width - 2) + "▧")
+            this_frame = this_frame + "[green]┏" + "━" * (width - 2) + "┓[/green]" + "\n"
         elif x == height - 1:
-            print("▧" + "≡" * (width - 2) + "▨")
+            this_frame = this_frame + "[green]┗" + "━" * (width - 2) + "┛[/green]"
         else:
             print_row(x)
-            print("|" + "".join(map(str, current_row)) + "|")
+            this_frame = this_frame + f'[green]┃[/green]{"".join(map(str, current_row))}[green]┃[/green]' + "\n"
+    return this_frame
 
 
 def set_facing_dir():
     global facing
-    if keyboard.is_pressed('w') and facing != 'south':
+    if (keyboard.is_pressed('w') or keyboard.is_pressed('up arrow')) and facing != 'south':
         facing = 'north'
         return
-    elif keyboard.is_pressed('s') and facing != 'north':
+    elif (keyboard.is_pressed('s') or keyboard.is_pressed('down arrow')) and facing != 'north':
         facing = 'south'
         return
-    elif keyboard.is_pressed('a') and facing != 'east':
+    elif (keyboard.is_pressed('a') or keyboard.is_pressed('left arrow')) and facing != 'east':
         facing = 'west'
         return
-    elif keyboard.is_pressed('d') and facing != 'west':
+    elif (keyboard.is_pressed('d') or keyboard.is_pressed('right arrow')) and facing != 'west':
         facing = 'east'
         return
 
@@ -102,45 +101,47 @@ def move_player():
         if facing == 'east':
             game_contents[0][0].pos_x += speed
         # make sure player cannot get out of bounds
-        '''if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
-            in_menu = True'''
+        if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
+            in_menu = True
+            reset()
         previous_time = time.time()
 
 
 def place_fruits():
     # if number of fruits is less than is set, add a new fruit
     while len(game_contents[1]) < fruit_count:
-        game_contents[1].append(GameObject('fruit', random.randrange(0, width - 3), random.randrange(1, height - 2), '∘'))
+        game_contents[1].append(GameObject('fruit', random.randrange(0, width - 2), random.randrange(1, height - 2), '[on red] [/on red]'))
 
 
 def eat_fruit():
     for fruit in game_contents[1]:
         if fruit.pos_y == game_contents[0][0].pos_y // 1 and fruit.pos_x == game_contents[0][0].pos_x // 1:
             del game_contents[1][game_contents[1].index(fruit)]
-            game_contents[0].append(GameObject('player', new_tile_x, new_tile_y, '■'))
+            game_contents[0].append(GameObject('player', new_tile_x, new_tile_y, '█'))
 
 
-game_contents[0].append(GameObject('player', width // 2, height // 2, '■'))
+def reset():
+    global facing
+    global game_contents
+    game_contents = [[], []]
+    game_contents[0].append(GameObject('player', width // 2, height // 2, '█'))
+    facing = 'east'
+    row_size = int(sqrt(fruit_count) // 1)
+    for y in range(row_size):
+        for x in range(row_size):
+            game_contents[1].append(GameObject('fruit', (width * 2) // 3 + x, height // 2 - row_size + y, '[on red] [/on red]'))
 
-game_contents[1].append(GameObject('fruit', 90, 13, '∘'))
-game_contents[1].append(GameObject('fruit', 90, 14, '∘'))
-game_contents[1].append(GameObject('fruit', 90, 15, '∘'))
-game_contents[1].append(GameObject('fruit', 91, 13, '∘'))
-game_contents[1].append(GameObject('fruit', 91, 14, '∘'))
-game_contents[1].append(GameObject('fruit', 91, 15, '∘'))
-game_contents[1].append(GameObject('fruit', 92, 13, '∘'))
-game_contents[1].append(GameObject('fruit', 92, 14, '∘'))
-game_contents[1].append(GameObject('fruit', 92, 15, '∘'))
+
+reset()
 
 while running:
     while in_menu:
+        os.system('cls')
         print(menu_screen)
+        console.print(int((width / 2) - 10) * ' ' + 'Press enter to start', style='blink')
         keyboard.wait('enter')
         in_menu = False
     place_fruits()
-    new_frame()
-    time.sleep(0.008)
-    os.system('cls')
-    # clear_all()
+    console.print(new_frame())
     move_player()
     eat_fruit()
