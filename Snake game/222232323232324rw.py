@@ -2,6 +2,7 @@ import time
 import keyboard
 import random
 import os
+from assets import menu_screen
 
 running = True
 width = 120
@@ -15,6 +16,7 @@ y_count = 0
 previous_time = time.time()
 game_contents = [[], []]  # stores all objects currently in game -- used for rendering -- list 0 is player -- list 1 is fruits
 current_row = []
+in_menu = False
 
 
 class GameObject:
@@ -56,21 +58,29 @@ def new_frame():
             print("|" + "".join(map(str, current_row)) + "|")
 
 
+def set_facing_dir():
+    global facing
+    if keyboard.is_pressed('w') and facing != 'south':
+        facing = 'north'
+        return
+    elif keyboard.is_pressed('s') and facing != 'north':
+        facing = 'south'
+        return
+    elif keyboard.is_pressed('a') and facing != 'east':
+        facing = 'west'
+        return
+    elif keyboard.is_pressed('d') and facing != 'west':
+        facing = 'east'
+        return
+
+
 def move_player():
     # set the facing direction via key input
-    global facing
-    global running
+    global in_menu
     global new_tile_x
     global new_tile_y
     global previous_time
-    if keyboard.is_pressed('w') and facing != 'south':
-        facing = 'north'
-    elif keyboard.is_pressed('s') and facing != 'north':
-        facing = 'south'
-    elif keyboard.is_pressed('a') and facing != 'east':
-        facing = 'west'
-    elif keyboard.is_pressed('d') and facing != 'west':
-        facing = 'east'
+    set_facing_dir()
     # move all other snake parts
     new_tile_x = game_contents[0][len(game_contents[0]) - 1].pos_x
     new_tile_y = game_contents[0][len(game_contents[0]) - 1].pos_y
@@ -92,14 +102,8 @@ def move_player():
         if facing == 'east':
             game_contents[0][0].pos_x += speed
         # make sure player cannot get out of bounds
-        if game_contents[0][0].pos_x > width - 3:
-            running = False
-        if game_contents[0][0].pos_x < 0:
-            running = False
-        if game_contents[0][0].pos_y > height - 2:
-            running = False
-        if game_contents[0][0].pos_y < 1:
-            running = False
+        '''if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
+            in_menu = True'''
         previous_time = time.time()
 
 
@@ -129,10 +133,14 @@ game_contents[1].append(GameObject('fruit', 92, 14, '∘'))
 game_contents[1].append(GameObject('fruit', 92, 15, '∘'))
 
 while running:
+    while in_menu:
+        print(menu_screen)
+        keyboard.wait('enter')
+        in_menu = False
     place_fruits()
     new_frame()
-    time.sleep(0.01767)
-    # os.system('cls')
-    clear_all()
+    time.sleep(0.008)
+    os.system('cls')
+    # clear_all()
     move_player()
     eat_fruit()
