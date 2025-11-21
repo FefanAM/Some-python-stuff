@@ -4,7 +4,7 @@ import random
 from math import sqrt
 from rich.console import Console
 import os
-from assets import menu_screen, blank_screen
+from assets import menu_screen
 
 running = True
 width = 60
