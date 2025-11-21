@@ -20,6 +20,7 @@ game_contents = [[], []]  # stores all objects currently in game -- used for ren
 current_row = []
 in_menu = True
 console = Console()
+can_change_dir = True
 
 
 class GameObject:
@@ -59,18 +60,23 @@ def new_frame() -> str:
 
 def set_facing_dir():
     global facing
-    if (keyboard.is_pressed('w') or keyboard.is_pressed('up arrow')) and facing != 'south':
-        facing = 'north'
-        return
-    elif (keyboard.is_pressed('s') or keyboard.is_pressed('down arrow')) and facing != 'north':
-        facing = 'south'
-        return
-    elif (keyboard.is_pressed('a') or keyboard.is_pressed('left arrow')) and facing != 'east':
-        facing = 'west'
-        return
-    elif (keyboard.is_pressed('d') or keyboard.is_pressed('right arrow')) and facing != 'west':
-        facing = 'east'
-        return
+    if can_change_dir == True:
+        if (keyboard.is_pressed('w') or keyboard.is_pressed('up arrow')) and facing != 'south':
+            facing = 'north'
+            return False
+        elif (keyboard.is_pressed('s') or keyboard.is_pressed('down arrow')) and facing != 'north':
+            facing = 'south'
+            return False
+        elif (keyboard.is_pressed('a') or keyboard.is_pressed('left arrow')) and facing != 'east':
+            facing = 'west'
+            return False
+        elif (keyboard.is_pressed('d') or keyboard.is_pressed('right arrow')) and facing != 'west':
+            facing = 'east'
+            return False
+        else:
+            return True
+    else:
+        return False
 
 
 def move_player():
@@ -79,7 +85,8 @@ def move_player():
     global new_tile_x
     global new_tile_y
     global previous_time
-    set_facing_dir()
+    global can_change_dir
+    can_change_dir = set_facing_dir()
     # move all other snake parts
     new_tile_x = game_contents[0][len(game_contents[0]) - 1].pos_x
     new_tile_y = game_contents[0][len(game_contents[0]) - 1].pos_y
@@ -100,7 +107,8 @@ def move_player():
             game_contents[0][0].pos_x -= speed
         if facing == 'east':
             game_contents[0][0].pos_x += speed
-        # make sure player cannot get out of bounds
+        can_change_dir = True
+        # make sure player cannot get out of bound
         if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
             in_menu = True
             reset()
