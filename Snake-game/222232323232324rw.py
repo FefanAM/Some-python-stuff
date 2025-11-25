@@ -21,6 +21,7 @@ current_row = []
 in_menu = True
 console = Console()
 can_change_dir = True
+score = 0
 
 
 class GameObject:
@@ -49,18 +50,18 @@ def new_frame() -> str:
     this_frame = ""
     for x in range(height):
         if x == 0:
-            this_frame = this_frame + "[green]┏" + "━" * (width - 2) + "┓[/green]" + "\n"
+            this_frame = this_frame + f'[green]┏{ "━" * (width - 2)}┓[/green] {score}\n'
         elif x == height - 1:
-            this_frame = this_frame + "[green]┗" + "━" * (width - 2) + "┛[/green]"
+            this_frame = this_frame + f'[green]┗{ "━" * (width - 2)}┛[/green]'
         else:
             print_row(x)
-            this_frame = this_frame + f'[green]┃[/green]{"".join(map(str, current_row))}[green]┃[/green]' + "\n"
+            this_frame = this_frame + f'[green]┃[/green]{"".join(map(str, current_row))}[green]┃[/green]\n'
     return this_frame
 
 
 def set_facing_dir():
     global facing
-    if can_change_dir == True:
+    if can_change_dir:
         if (keyboard.is_pressed('w') or keyboard.is_pressed('up arrow')) and facing != 'south':
             facing = 'north'
             return False
@@ -112,6 +113,8 @@ def move_player():
         if game_contents[0][0].pos_x > width - 3 or game_contents[0][0].pos_x < 0 or game_contents[0][0].pos_y > height - 2 or game_contents[0][0].pos_y < 1:
             in_menu = True
             reset()
+            with open('leaderboard.txt', 'a') as file:
+                file.write(get_player_highscore())
         previous_time = time.time()
 
 
@@ -121,11 +124,19 @@ def place_fruits():
         game_contents[1].append(GameObject('fruit', random.randrange(0, width - 2), random.randrange(1, height - 2), '[on red] [/on red]'))
 
 
+def get_player_highscore():
+    os.system('cls')
+    print(f'Your score is: {score}')
+    highscore = f'{input('Enter your nickname:')};{score}\n'
+    return highscore
+
 def eat_fruit():
+    global score
     for fruit in game_contents[1]:
         if fruit.pos_y == game_contents[0][0].pos_y // 1 and fruit.pos_x == game_contents[0][0].pos_x // 1:
             del game_contents[1][game_contents[1].index(fruit)]
             game_contents[0].append(GameObject('player', new_tile_x, new_tile_y, '█'))
+            score += 1
 
 
 def reset():
@@ -147,7 +158,7 @@ while running:
         os.system('cls')
         print(menu_screen)
         console.print(int((width / 2) - 10) * ' ' + 'Press enter to start', style='blink')
-        keyboard.wait('enter')
+        input()
         in_menu = False
     place_fruits()
     console.print(new_frame())
