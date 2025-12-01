@@ -130,6 +130,7 @@ def get_player_highscore():
     highscore = f'{input('Enter your nickname:')};{score}\n'
     return highscore
 
+
 def eat_fruit():
     global score
     for fruit in game_contents[1]:
@@ -152,6 +153,10 @@ def reset():
 
 
 reset()
+
+if not os.path.exists('leaderboard.txt'):
+    with open('leaderboard.txt', 'w') as file:
+        pass
 
 while running:
     while in_menu:
