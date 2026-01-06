@@ -1,6 +1,6 @@
 def solve_linear(a, b):
-    a = str(a)
-    b = str(b)
+    a = int(a)
+    b = int(b)
     if a == 0 and b == 0:
         return "Rovnice ma nekonecne reseni"
     if a == 0 and b != 0:
