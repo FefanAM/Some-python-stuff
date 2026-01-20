@@ -1,7 +1,7 @@
 import time
 
 
-def fib(limit, get_time=False, shorten_number=False):
+def fib(limit, get_time=False, shorten_number=False, print_num=True):
     i = 1
     a, b = 1, 2
     if limit == 1 or limit == 0:
@@ -10,7 +10,9 @@ def fib(limit, get_time=False, shorten_number=False):
     while i < limit - 1:
         a, b = b, a + b
         i += 1
-    if shorten_number and len(str(b)) > 6:
+    if not print_num:
+        return f'Process took {time.time() - seconds} seconds to compute {limit} numbers.'
+    if shorten_number and i > 20:
         b = f'{int(str(b)[:2])} × 10^{len(str(b)) - 2}'
     if get_time:
         return b, time.time() - seconds
@@ -23,5 +25,5 @@ def fib_recursion(n):
     return fib_recursion(n - 1) + fib_recursion(n - 2)
 
 
-print(fib(10000, get_time=True, shorten_number=True))
+print(fib(1000000, print_num=False))
 print(fib_recursion(10))
