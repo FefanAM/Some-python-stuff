@@ -1,5 +1,4 @@
 import time
-from textwrap import shorten
 
 
 def fib(limit, get_time=False, shorten_number=False, print_num=True):
