@@ -1,3 +1,6 @@
+letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
+
+
 def table(n: int) -> list:
     # returns a list of rows based on the number of variables (n)
     contents = []
@@ -16,10 +19,11 @@ def table(n: int) -> list:
 
 def print_table(a: list) -> str:
     # takes the inputted table list and unpacks it into a more readable form
-    result = ""
+    result = f'{letters[:len(a[0]) * 2 - 1]} |\n{"-" * (len(a[0]) * 2 + 3)}'
     for row in a:
+        row.append('|')
         result = f'{result}\n{" ".join(row)}'  # removes the square brackets and starts a new line after every row
     return result
 
 
-print(print_table(table(3)))
+print(print_table(table(5)))
