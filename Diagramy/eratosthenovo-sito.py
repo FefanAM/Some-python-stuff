@@ -33,6 +33,4 @@ def sito(n):
     return number_row
 
 
-is_time = time.time()
-eratosthenes_sieve(1000000000)
-print(f'Process took {int(time.time() - is_time)} seconds.')
+print(eratosthenes_sieve(100000))
