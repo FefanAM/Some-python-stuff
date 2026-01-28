@@ -1,6 +1,20 @@
 letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
 
 
+def solve(fun: str, n: int):
+    tab = table(n)
+    ans = []
+    temp_list = []
+    mult = fun.replace(' ', '')
+    mult = mult.split('+')
+    for m in mult:
+        temp_list = []
+        for var in m:
+            temp_list.append(get_truth_list(int(letters.index(var) / 2 + 1), tab))
+        ans.append(bool_mult(temp_list, tab))
+    return print_table(tab, bool_add(ans, tab))
+        
+
 def table(n: int) -> list:
     # returns a list of rows based on the number of variables (n)
     contents = []
@@ -18,11 +32,8 @@ def table(n: int) -> list:
 
 
 def bool_add(variables: list, b_table: list) -> list:
-    addends = []
     answer = []
-    for var in variables:
-        addends.append(get_truth_list(int(letters.index(var) / 2 + 1), b_table))
-    for a, b in zip(addends[0], addends[1]):
+    for a, b in zip(variables[0], variables[1]):
         if bool(int(a)) or bool(int(b)):
             answer.append(1)
         else:
@@ -31,11 +42,8 @@ def bool_add(variables: list, b_table: list) -> list:
 
 
 def bool_mult(variables: list, b_table: list) -> list:
-    multiplicants = []
     answer = []
-    for var in variables:
-        multiplicants.append(get_truth_list(int(letters.index(var) / 2 + 1), b_table))
-    for a, b in zip(multiplicants[0], multiplicants[1]):
+    for a, b in zip(variables[0], variables[1]):
         if bool(int(a)) and bool(int(b)):
             answer.append(1)
         else:
@@ -69,4 +77,11 @@ def print_table(a: list, y: list = []) -> str:
     return result
 
 
-print(print_table(table(2), bool_add(['A', 'B'], table(2))))
+def negation(l: list) -> list:
+    answer = []
+    for item in l:
+        answer. append(int(not bool(int(item))))
+    return answer
+
+
+print(solve('AB + BC', 3))
