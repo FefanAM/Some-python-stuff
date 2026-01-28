@@ -10,7 +10,7 @@ def solve(fun: str, n: int):
     for m in mult:
         temp_list = []
         for var in m:
-            temp_list.append(get_truth_list(int(letters.index(var) / 2 + 1), tab))
+            temp_list.append(get_truth_list(var, tab))
         ans.append(bool_mult(temp_list, tab))
     return print_table(tab, bool_add(ans, tab))
         
@@ -71,12 +71,13 @@ def bool_mult(variables: list, b_table: list) -> list:
     return bool_mult(variables, b_table)
 
 
-def get_truth_list(n: int, reference: list) -> list:
+def get_truth_list(n: str, reference: list) -> list:
     answer = []
+    c = int(letters.index(n) / 2 + 1)
     for x in reference:
         i = 0
         for y in x:
-            if i == n - 1:
+            if i == c - 1:
                 answer.append(y)
                 i += 1
             else:
