@@ -1,5 +1,12 @@
 letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
 
+""" 
+TODO:
+    if statement is shorter than two, return truth list
+    implement negation
+    implement solving for final operation = multiplication
+"""
+
 
 def solve(fun: str, n: int):
     tab = table(n)
