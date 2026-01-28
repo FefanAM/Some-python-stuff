@@ -30,6 +30,19 @@ def bool_add(variables: list, b_table: list) -> list:
     return answer
 
 
+def bool_mult(variables: list, b_table: list) -> list:
+    multiplicants = []
+    answer = []
+    for var in variables:
+        multiplicants.append(get_truth_list(int(letters.index(var) / 2 + 1), b_table))
+    for a, b in zip(multiplicants[0], multiplicants[1]):
+        if bool(int(a)) and bool(int(b)):
+            answer.append(1)
+        else:
+            answer.append(0)
+    return answer    
+
+
 def get_truth_list(n: int, reference: list) -> list:
     answer = []
     for x in reference:
@@ -44,13 +57,16 @@ def get_truth_list(n: int, reference: list) -> list:
     return answer
 
 
-def print_table(a: list) -> str:
+def print_table(a: list, y: list = []) -> str:
     # takes the inputted table list and unpacks it into a more readable form
-    result = f'{letters[:len(a[0]) * 2 - 1]} |\n{"-" * (len(a[0]) * 2 + 3)}'
-    for row in a:
+    if not y:
+        y = ['a'] * len(a)
+    result = f'{letters[:len(a[0]) * 2 - 1]} | Y\n{"-" * (len(a[0]) * 2 + 3)}'
+    for row, i in zip(a, range(len(a) + 1)):
         row.append('|')
+        row.append(str(y[i]))
         result = f'{result}\n{" ".join(row)}'  # removes the square brackets and starts a new line after every row
     return result
 
 
-print(bool_add(['A', 'B'], table(2)))
+print(print_table(table(2), bool_add(['A', 'B'], table(2))))
