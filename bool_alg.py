@@ -8,18 +8,35 @@ TODO:
 """
 
 
-def solve(fun: str, n: int):
+def solve(func: str, n: int):
     tab = table(n)
     ans = []
     temp_list = []
-    mult = fun.replace(' ', '')
+    is_negated = False
+    mult = func.replace(' ', '')
+    mult = mult.replace('*', '')
+    mult = mult.upper()
+    mult = mult.replace('NOT', '_')
     mult = mult.split('+')
     for m in mult:
         temp_list = []
         for var in m:
-            temp_list.append(get_truth_list(var, tab))
+            if var == '_':
+                is_negated = True
+                continue
+            if is_negated:
+                temp_list.append(negation(get_truth_list(var, tab)))
+                is_negated = False
+            else:
+                temp_list.append(get_truth_list(var, tab))
+        if len(m) < 2:
+            ans.append(temp_list[0])
+            continue
         ans.append(bool_mult(temp_list, tab))
+    if len(mult) < 2:
+        return print_table(tab, ans[0])
     return print_table(tab, bool_add(ans, tab))
+    
         
 
 def table(n: int) -> list:
@@ -98,9 +115,9 @@ def print_table(a: list, y: list = []) -> str:
     if not y:
         y = ['a'] * len(a)
     result = f'{letters[:len(a[0]) * 2 - 1]} | Y\n{"-" * (len(a[0]) * 2 + 3)}'
-    for row, i in zip(a, range(len(a) + 1)):
+    for row, i in zip(a, y):
         row.append('|')
-        row.append(str(y[i]))
+        row.append(str(i))
         result = f'{result}\n{" ".join(row)}'  # removes the square brackets and starts a new line after every row
     return result
 
@@ -112,4 +129,4 @@ def negation(l: list) -> list:
     return answer
 
 
-print(solve('ACB + BDC + CAD', 4))
+print(solve('A + b', 2))
