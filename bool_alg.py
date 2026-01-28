@@ -33,22 +33,42 @@ def table(n: int) -> list:
 
 def bool_add(variables: list, b_table: list) -> list:
     answer = []
+    if len(variables) == 2:
+        for a, b in zip(variables[0], variables[1]):
+            if bool(int(a)) or bool(int(b)):
+                answer.append(1)
+            else:
+                answer.append(0)
+        return answer
     for a, b in zip(variables[0], variables[1]):
-        if bool(int(a)) or bool(int(b)):
-            answer.append(1)
-        else:
-            answer.append(0)
-    return answer
+            if bool(int(a)) or bool(int(b)):
+                answer.append(1)
+            else:
+                answer.append(0)
+    variables.pop(0)
+    variables.pop(1)
+    variables.insert(0, answer)
+    return bool_add(variables, b_table)
 
 
 def bool_mult(variables: list, b_table: list) -> list:
     answer = []
+    if len(variables) == 2:
+        for a, b in zip(variables[0], variables[1]):
+            if bool(int(a)) and bool(int(b)):
+                answer.append(1)
+            else:
+                answer.append(0)
+        return answer
     for a, b in zip(variables[0], variables[1]):
-        if bool(int(a)) and bool(int(b)):
-            answer.append(1)
-        else:
-            answer.append(0)
-    return answer    
+            if bool(int(a)) and bool(int(b)):
+                answer.append(1)
+            else:
+                answer.append(0)
+    variables.pop(0)
+    variables.pop(1)
+    variables.insert(0, answer)
+    return bool_mult(variables, b_table)
 
 
 def get_truth_list(n: int, reference: list) -> list:
@@ -84,4 +104,4 @@ def negation(l: list) -> list:
     return answer
 
 
-print(solve('AB + BC', 3))
+print(solve('ACB + BDC + CAD', 4))
