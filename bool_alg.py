@@ -2,9 +2,8 @@ letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
 
 """ 
 TODO:
-    if statement is shorter than two, return truth list
-    implement negation
     implement solving for final operation = multiplication
+    brackets
 """
 
 
@@ -16,12 +15,13 @@ def solve(func: str, n: int):
     mult = func.replace(' ', '')
     mult = mult.replace('*', '')
     mult = mult.upper()
-    mult = mult.replace('NOT', '_')
+    mult = mult.replace('_', '!')
+    mult = mult.replace('NOT', '!')
     mult = mult.split('+')
     for m in mult:
         temp_list = []
         for var in m:
-            if var == '_':
+            if var == '!':
                 is_negated = True
                 continue
             if is_negated:
@@ -29,6 +29,7 @@ def solve(func: str, n: int):
                 is_negated = False
             else:
                 temp_list.append(get_truth_list(var, tab))
+        m = m.replace('!', '')
         if len(m) < 2:
             ans.append(temp_list[0])
             continue
@@ -129,4 +130,4 @@ def negation(l: list) -> list:
     return answer
 
 
-print(solve('A + b', 2))
+print(solve('!A + b', 2))
