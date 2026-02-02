@@ -7,12 +7,14 @@ TODO:
 """
 
 
-def solve(func: str, n: int):
+def solve(func: str = '', n: int = 2):
     # combine everything to return whole table with answer for given function (func)
     tab = table(n)
     ans = []
     temp_list = []
     is_negated = False
+    if func == '':  # if no function given, return table for n variables
+        return print_table(a=tab)
     # make the string with function uniform for next operations
     mult = func.replace(' ', '')
     mult = mult.replace('*', '')
@@ -139,4 +141,4 @@ def negation(l: list) -> list:
     return answer
 
 
-print(solve('!A + b', 2))
+print(solve(n=2))
