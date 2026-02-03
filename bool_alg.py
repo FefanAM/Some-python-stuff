@@ -1,9 +1,10 @@
 letters = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
 
 
-def solve(func: str = ''):
+def solve(func: str = '') -> str:
     # combine everything to return whole table with answer for given function (func)
-
+    if set(func) == {'0'} or set(func) == {' '} or not func:  # if zero, space or empty return none
+        return ''
     # make the string with function uniform for next operations
     mult = func.replace(' ', '')
     mult = mult.replace('*', '')
@@ -151,4 +152,8 @@ def negation(li: list) -> list:
 
 
 while True:
-    print(solve(input('Enter function: Y = ')))
+    try:
+        print(solve(input('Enter function: Y = ')))
+    except KeyboardInterrupt:
+        print('\n\nProcess closed with Ctrl+C')
+        break
