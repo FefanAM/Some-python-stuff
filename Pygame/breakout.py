@@ -172,7 +172,8 @@ player = Player()
 blocks.append(player)
 block_list.add(blocks)
 
-balls.add(Ball(30, 600, 45))
+ball = Ball(30, 600, 45)
+balls.add(ball)
 
 while running:
     # poll for events
