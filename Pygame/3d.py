@@ -18,21 +18,15 @@ project = np.array([[1, 0, 0], [0, 1, 0]])
 points = [
     np.array([[50], [50], [50]]),
     np.array([[50], [-50], [50]]),
-    np.array([[-50], [50], [50]]),
     np.array([[-50], [-50], [50]]),
+    np.array([[-50], [50], [50]]),
     np.array([[50], [50], [-50]]),
     np.array([[50], [-50], [-50]]),
-    np.array([[-50], [50], [-50]]),
-    np.array([[-50], [-50], [-50]])
+    np.array([[-50], [-50], [-50]]),
+    np.array([[-50], [50], [-50]])
 ]
 
-
-def connect_dots(dots):
-    for dot in dots:
-        for d in dots:
-            if dot.ravel()[0] == d.ravel()[0] and dot.ravel()[1] == d.ravel()[1] or dot.ravel()[0] == d.ravel()[0] and dot.ravel()[2] == d.ravel()[2] or dot.ravel()[2] == d.ravel()[2] and dot.ravel()[1] == d.ravel()[1]:
-                pygame.draw.line(screen, 'white', to_2d(dot), to_2d(d))
-
+lines = ((0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7))
 
 def c(coordinates):
     return [coordinates[0] + width // 2, height // 2 - coordinates[1]]
@@ -93,7 +87,9 @@ while running:
         points_lines.append(p)
         pygame.draw.circle(screen, 'white', to_2d(p), 20)
 
-    connect_dots(points_lines)
+    for i in lines:
+        a, b = i
+        pygame.draw.line(screen, 'white', to_2d(points_lines[a]), to_2d(points_lines[b]))
 
     pygame.display.flip()
     alpha += 3 * dt
