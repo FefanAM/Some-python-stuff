@@ -11,24 +11,38 @@ dt = 0
 
 screen = pygame.display.set_mode((width, height))
 clock = pygame.time.Clock()
+pygame.display.set_caption('3D Cube')
 running = True
 
 project = np.array([[1, 0, 0], [0, 1, 0]])
 
+size = 100
+radius = 5
+
+
+class Point:
+    def __init__(self, x, y, z, color='white'):
+        self.coordinates = np.array([[x], [y], [z]])
+        self.color = color
+
+
 points = [
-    np.array([[50], [50], [50]]),
-    np.array([[50], [-50], [50]]),
-    np.array([[-50], [-50], [50]]),
-    np.array([[-50], [50], [50]]),
-    np.array([[50], [50], [-50]]),
-    np.array([[50], [-50], [-50]]),
-    np.array([[-50], [-50], [-50]]),
-    np.array([[-50], [50], [-50]])
+    Point(size, size, size),
+    Point(size, -size, size),
+    Point(-size, -size, size),
+    Point(-size, size, size),
+    Point(size, size, -size),
+    Point(size, -size, -size),
+    Point(-size, -size, -size),
+    Point(-size, size, -size),
 ]
 
 lines = ((0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7))
+faces = ((0, 1, 2, 3), (4, 5, 6, 7), (0, 4, 5, 1), (3, 7, 6, 2), (1, 5, 6, 2), (0, 4, 7, 3))
+colors = ['red', 'green', 'blue', 'orange', 'white', 'yellow']
 
-def c(coordinates):
+
+def con(coordinates):
     return [coordinates[0] + width // 2, height // 2 - coordinates[1]]
 
 
@@ -54,23 +68,31 @@ def rotate_z(point, angle):
     rotation = np.array(
         [[math.cos(angle), - math.sin(angle), 0],
          [math.sin(angle), math.cos(angle), 0],
-         [ 0, 0, 1]]
+         [0, 0, 1]]
     )
     return np.matmul(rotation, point)
-
-
-def rotate_somehow(point, angle):
-    rotation = np.array(
-        [[math.cos(angle), - math.sin(angle), 0],
-         [math.sin(angle), 1, math.cos(angle)],
-         [ 0, 0, 1]]
-    )
-    return np.matmul(rotation, point)
-
 
 
 def to_2d(point):
-    return c(np.matmul(project, point).ravel())
+    return con(np.matmul(project, point).ravel())
+
+
+def draw_lines():
+    for i in lines:
+        a, b = i
+        pygame.draw.line(screen, 'white', to_2d(points[a].coordinates), to_2d(points[b].coordinates))
+
+
+def draw_points():
+    for p in points:
+        p.coordinates = rotate_x(rotate_y(rotate_z(p.coordinates, gam), beta), alpha)
+        pygame.draw.circle(screen, 'white', to_2d(p.coordinates), radius)
+
+
+def draw_faces():
+    for i, color in zip(faces, colors):
+        a, b, c, d = i
+        pygame.draw.polygon(screen, color, [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)])
 
 
 while running:
@@ -80,21 +102,21 @@ while running:
 
     screen.fill("black")
 
+    mouse_x, mouse_y = pygame.mouse.get_rel()
     points_lines = []
 
-    for p in points:
-        p = rotate_x(rotate_y(rotate_z(p, gam), beta), alpha)
-        points_lines.append(p)
-        pygame.draw.circle(screen, 'white', to_2d(p), 20)
+    if pygame.mouse.get_pressed()[2]:
+        alpha += mouse_y / (height + width) * 8
+        beta += mouse_x / (height + width) * 8
 
-    for i in lines:
-        a, b = i
-        pygame.draw.line(screen, 'white', to_2d(points_lines[a]), to_2d(points_lines[b]))
+    draw_points()
 
+    draw_lines()
+
+    # draw_faces()
+
+    alpha = beta = 0
     pygame.display.flip()
-    alpha += 3 * dt
-    beta += 2 * dt
-    gam += 1 * dt
     dt = clock.tick(60) / 1000
 
 pygame.quit()
