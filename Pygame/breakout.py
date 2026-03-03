@@ -6,6 +6,7 @@ pygame.init()
 width = 1330
 height = 720
 screen = pygame.display.set_mode((width, height))
+pygame.display.set_caption('Breakout')
 clock = pygame.time.Clock()
 running = True
 block_list = pygame.sprite.Group()
@@ -72,6 +73,9 @@ class Ball(pygame.sprite.Sprite):
         # Fetch the rectangle object that has the dimensions of the image
         # Update the position of this object by setting the values of rect.x and rect.y
         self.rect = self.image.get_rect()
+        self.center()
+
+    def center(self):
         self.rect.x = width // 2 - self.size // 2
         self.rect.y = height // 2 + 200
 
@@ -114,6 +118,8 @@ class Ball(pygame.sprite.Sprite):
     @y.setter
     def y(self, value):
         self.rect.y = min(max(0, value), height - self.size)
+        if self.y == height - self.size:
+            self.center()
 
     @property
     def phi(self):
