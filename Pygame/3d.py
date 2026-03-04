@@ -44,7 +44,7 @@ points = [
 
 lines = ((0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7))
 faces = ((0, 1, 2, 3), (4, 5, 6, 7), (0, 4, 5, 1), (3, 7, 6, 2), (1, 5, 6, 2), (0, 4, 7, 3))
-colors = ['red', 'orange', 'blue', 'green', 'white', 'yellow']
+colors = ['red', '#FF800D', 'blue', 'green', 'white', 'yellow']
 
 
 def con(coordinates):
@@ -103,6 +103,7 @@ def draw_faces():
         if face_order[0].index in i:
             a, b, c, d = i
             pygame.draw.polygon(screen, color, [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)])
+            pygame.draw.polygon(screen, 'black', [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)], 4)
 
 
 while running:
@@ -110,7 +111,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    screen.fill("black")
+    screen.fill("#202020")
 
     mouse_x, mouse_y = pygame.mouse.get_rel()
 
@@ -126,6 +127,6 @@ while running:
 
     alpha = beta = 0
     pygame.display.flip()
-    dt = clock.tick(60) / 1000
+    dt = clock.tick(120) / 1000
 
 pygame.quit()
