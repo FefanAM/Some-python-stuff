@@ -17,29 +17,34 @@ running = True
 project = np.array([[1, 0, 0], [0, 1, 0]])
 
 size = 100
-radius = 5
+radius = 0
 
 
 class Point:
-    def __init__(self, x, y, z, color='white'):
+    def __init__(self, x, y, z, index, color='white'):
         self.coordinates = np.array([[x], [y], [z]])
         self.color = color
+        self.z = z
+        self.index = index
+
+    def update(self):
+        self.z = self.coordinates.ravel()[2]
 
 
 points = [
-    Point(size, size, size),
-    Point(size, -size, size),
-    Point(-size, -size, size),
-    Point(-size, size, size),
-    Point(size, size, -size),
-    Point(size, -size, -size),
-    Point(-size, -size, -size),
-    Point(-size, size, -size),
+    Point(size, size, size, 0),
+    Point(size, -size, size, 1),
+    Point(-size, -size, size, 2),
+    Point(-size, size, size, 3),
+    Point(size, size, -size, 4),
+    Point(size, -size, -size, 5),
+    Point(-size, -size, -size, 6),
+    Point(-size, size, -size, 7)
 ]
 
 lines = ((0, 1), (1, 2), (2, 3), (3, 0), (4, 5), (5, 6), (6, 7), (7, 4), (0, 4), (1, 5), (2, 6), (3, 7))
 faces = ((0, 1, 2, 3), (4, 5, 6, 7), (0, 4, 5, 1), (3, 7, 6, 2), (1, 5, 6, 2), (0, 4, 7, 3))
-colors = ['red', 'green', 'blue', 'orange', 'white', 'yellow']
+colors = ['red', 'orange', 'blue', 'green', 'white', 'yellow']
 
 
 def con(coordinates):
@@ -86,13 +91,18 @@ def draw_lines():
 def draw_points():
     for p in points:
         p.coordinates = rotate_x(rotate_y(rotate_z(p.coordinates, gam), beta), alpha)
+        p.update()
         pygame.draw.circle(screen, 'white', to_2d(p.coordinates), radius)
 
 
 def draw_faces():
+    face_order = points.copy()
+    face_order.sort(key=lambda x: x.z, reverse=True)
+    # for j in range(len(face_order) - 1):
     for i, color in zip(faces, colors):
-        a, b, c, d = i
-        pygame.draw.polygon(screen, color, [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)])
+        if face_order[0].index in i:
+            a, b, c, d = i
+            pygame.draw.polygon(screen, color, [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)])
 
 
 while running:
@@ -103,7 +113,6 @@ while running:
     screen.fill("black")
 
     mouse_x, mouse_y = pygame.mouse.get_rel()
-    points_lines = []
 
     if pygame.mouse.get_pressed()[2]:
         alpha += mouse_y / (height + width) * 8
@@ -111,9 +120,9 @@ while running:
 
     draw_points()
 
-    draw_lines()
+    # draw_lines()
 
-    # draw_faces()
+    draw_faces()
 
     alpha = beta = 0
     pygame.display.flip()
