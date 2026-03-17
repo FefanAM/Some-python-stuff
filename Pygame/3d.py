@@ -1,11 +1,10 @@
 import math
-
 import pygame
 import numpy as np
 
 pygame.init()
-width = 2000
-height = 1000
+width = 1600
+height = 800
 alpha = beta = gam = 0
 dt = 0
 
@@ -16,7 +15,7 @@ running = True
 
 project = np.array([[1, 0, 0], [0, 1, 0]])
 
-size = 250
+size = 200
 radius = 0
 
 
@@ -108,8 +107,8 @@ def draw_faces():
             pygame.draw.polygon(screen, color, [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)])
             pygame.draw.polygon(screen, 'black', [to_2d(points[a].coordinates), to_2d(points[b].coordinates), to_2d(points[c].coordinates), to_2d(points[d].coordinates)], 4)
             # divide each face into four pieces
-            # pygame.draw.line(screen, 'black', con([(points[a].x + points[b].x) / 2, (points[a].y + points[b].y) / 2]), con([(points[c].x + points[d].x) / 2, (points[c].y + points[d].y) / 2]), 4)
-            # pygame.draw.line(screen, 'black', con([(points[a].x + points[d].x) / 2, (points[a].y + points[d].y) / 2]), con([(points[b].x + points[c].x) / 2, (points[b].y + points[c].y) / 2]), 4)
+            pygame.draw.line(screen, 'black', con([(points[a].x + points[b].x) / 2, (points[a].y + points[b].y) / 2]), con([(points[c].x + points[d].x) / 2, (points[c].y + points[d].y) / 2]), 4)
+            pygame.draw.line(screen, 'black', con([(points[a].x + points[d].x) / 2, (points[a].y + points[d].y) / 2]), con([(points[b].x + points[c].x) / 2, (points[b].y + points[c].y) / 2]), 4)
 
 
 while running:

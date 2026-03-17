@@ -1,5 +1,30 @@
 import math
 import pygame
+import tkinter as tk
+
+running = False
+
+
+def start():
+    global running
+    running = True
+
+
+window = tk.Tk()
+window.title('Breakout menu')
+window.geometry('200x100')
+
+hp_frame = tk.Frame(window)
+
+hp_label = tk.Label(window, text='Block HP:')
+
+hp_entry = tk.Entry(window)
+hp_frame.pack(side='right')
+play_btn = tk.Button(text='Play', command=start, width=50)
+play_btn.pack(side='left')
+
+
+tk.mainloop()
 
 # pygame setup
 pygame.init()
@@ -8,7 +33,6 @@ height = 720
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('Breakout')
 clock = pygame.time.Clock()
-running = True
 block_list = pygame.sprite.Group()
 balls = pygame.sprite.Group()
 dt = 0
