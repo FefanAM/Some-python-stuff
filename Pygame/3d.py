@@ -13,15 +13,20 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('3D Cube')
 running = True
 
-project = np.array([[1, 0, 0], [0, 1, 0]])
+project = np.array([[1, 0, 0, 0], [0, 1, 0, 0]])
 
 size = 200
 radius = 0
+fov = 20
+z_near = 1
+z_far = 1000
+aspect = width / height
 
 
 class Point:
     def __init__(self, x, y, z, index, color='white'):
-        self.coordinates = np.array([[x], [y], [z]])
+        self.coordinates = np.array([[x], [y], [z], [1]])
+
         self.color = color
         self.z = z
         self.x = x
@@ -56,32 +61,48 @@ def con(coordinates):
 
 def rotate_x(point, angle):
     rotation = np.array(
-        [[1, 0, 0],
-         [0, math.cos(angle), - math.sin(angle)],
-         [0, math.sin(angle), math.cos(angle)]]
+        [[1, 0, 0, 0],
+         [0, math.cos(angle), - math.sin(angle), 0],
+         [0, math.sin(angle), math.cos(angle), 0],
+         [0, 0, 0, 1]]
     )
     return np.matmul(rotation, point)
 
 
 def rotate_y(point, angle):
     rotation = np.array(
-        [[math.cos(angle), 0, math.sin(angle)],
-         [0, 1, 0],
-         [- math.sin(angle), 0, math.cos(angle)]]
+        [[math.cos(angle), 0, math.sin(angle), 0],
+         [0, 1, 0, 0],
+         [- math.sin(angle), 0, math.cos(angle), 0],
+         [0, 0, 0, 1]]
     )
     return np.matmul(rotation, point)
 
 
 def rotate_z(point, angle):
     rotation = np.array(
-        [[math.cos(angle), - math.sin(angle), 0],
-         [math.sin(angle), math.cos(angle), 0],
-         [0, 0, 1]]
+        [[math.cos(angle), - math.sin(angle), 0, 0],
+         [math.sin(angle), math.cos(angle), 0, 0],
+         [0, 0, 1, 0],
+         [0, 0, 0, 1]]
     )
     return np.matmul(rotation, point)
 
 
+def perspective(point, f, a, near, far):
+    range_inv = 1 / (near - far)
+    f = math.tan(math.pi * 0.5 - 0.5 * f)
+    perspective_matrix = np.array(
+        [[f/a, 0, 0, 0],
+         [0, f, 0, 0],
+         [0, 0, (near + far) * range_inv, -1],
+         [0, 0, near * far * range_inv * 2, 0]]
+    )
+    return np.matmul(perspective_matrix, point)
+
+
 def to_2d(point):
+    perspective(point, fov, aspect, z_near, z_far)
     return con(np.matmul(project, point).ravel())
 
 
