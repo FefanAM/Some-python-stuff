@@ -91,12 +91,12 @@ def rotate_z(point, angle):
 
 def perspective(point, f, a, near, far):
     range_inv = 1 / (near - far)
-    f = math.tan(math.pi * 0.5 - 0.5 * f)
+    S = 1 / math.tan((fov / 2) * (math.pi / 180))
     perspective_matrix = np.array(
         [[f/a, 0, 0, 0],
          [0, f, 0, 0],
-         [0, 0, (near + far) * range_inv, -1],
-         [0, 0, near * far * range_inv * 2, 0]]
+         [0, 0, -far / (far - near), -1],
+         [0, 0, - (far * near) / (far - near), 0]]
     )
     return np.matmul(perspective_matrix, point)
 
